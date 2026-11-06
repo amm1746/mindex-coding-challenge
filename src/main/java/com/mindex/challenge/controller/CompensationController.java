@@ -8,20 +8,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
 
 @RestController
 public class CompensationController {
+    private static final Logger LOG = LoggerFactory.getLogger(CompensationController.class);
 
     @Autowired
     private CompensationService compensationService;
 
     @PostMapping("/compensation")
+    @ResponseStatus(HttpStatus.CREATED)
     public Compensation create(@RequestBody Compensation compensation) {
+        LOG.debug("Received compensation create request for [{}]", compensation);
         return compensationService.create(compensation);
     }
 
     @GetMapping("/compensation/{employeeId}")
-    public Compensation read(@PathVariable String employeeId) {
+    public List<Compensation> read(@PathVariable String employeeId) {
+        LOG.debug("Received compensation read request for employee id [{}]", employeeId);
         return compensationService.read(employeeId);
     }
 }

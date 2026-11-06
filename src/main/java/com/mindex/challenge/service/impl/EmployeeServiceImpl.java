@@ -1,5 +1,6 @@
 package com.mindex.challenge.service.impl;
 
+
 import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.EmployeeService;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -29,12 +32,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee read(String id) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Reading employee with id [{}]", id);
 
         Employee employee = employeeRepository.findByEmployeeId(id);
 
         if (employee == null) {
-            throw new RuntimeException("Invalid employeeId: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid employeeId: " + id);
         }
 
         return employee;
@@ -44,6 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee update(Employee employee) {
         LOG.debug("Updating employee [{}]", employee);
 
+        read(employee.getEmployeeId());
         return employeeRepository.save(employee);
     }
 }

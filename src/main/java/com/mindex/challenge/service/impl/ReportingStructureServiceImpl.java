@@ -71,7 +71,8 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
                     LOG.warn("Direct report [{}] of employee [{}] does not exist, skipping", reportId, current.getEmployeeId());
                     continue;
                 }
- 
+                
+                seenIds.add(reportId);
                 toVisit.add(fullReport);
             }
         }
