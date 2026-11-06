@@ -7,21 +7,31 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * One compensation record for an employee.
+ */
 public class Compensation {
 
+    // Unique id for this record, generated when it's created
     @Id
     private String compensationId;
+    
+    // Links this record to an employee by id
     private String employeeId;
 
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal salary;
 
+    // A date with no time attached
     private LocalDate effectiveDate;
 
+    // Empty constructor 
     public Compensation() {
         
     }
 
+    // Getters and setters 
+    
     public String getCompensationId() {
         return compensationId;
     }

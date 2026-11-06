@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Creates and reads compensation records. Each record is linked to an
+ * employee by employeeId, and an employee can have several records over time.
+ */
 @Service
 public class CompensationServiceImpl implements CompensationService {
 
@@ -25,13 +29,15 @@ public class CompensationServiceImpl implements CompensationService {
     @Autowired
     private CompensationRepository compensationRepository;
 
+    // Used to check that the employee exists 
     @Autowired
     private EmployeeService employeeService;
 
     @Override
     public Compensation create(Compensation compensation) {
         LOG.debug("Creating compensation for employee [{}]", compensation.getEmployeeId());
- 
+        
+        // Reject missing required fields with 400 bad request 
         if (compensation.getEmployeeId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "employeeId is required");
         }
@@ -41,13 +47,15 @@ public class CompensationServiceImpl implements CompensationService {
         if (compensation.getEffectiveDate() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "effectiveDate is required");
         }
- 
+        
         if (compensation.getSalary().compareTo(BigDecimal.ZERO) < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "salary cannot be negative");
         }
- 
+        
+
         employeeService.read(compensation.getEmployeeId());
  
+        // Generate the id here so the client can't choose or overwrite one 
         compensation.setCompensationId(UUID.randomUUID().toString());
         compensationRepository.insert(compensation);
  
@@ -59,7 +67,8 @@ public class CompensationServiceImpl implements CompensationService {
     @Override
     public List<Compensation> read(String employeeId) {
         LOG.debug("Reading compensation for employee [{}]", employeeId);
- 
+        
+        // Returns 404 if the employee doesn't exist 
         employeeService.read(employeeId);
  
         List<Compensation> compensations = compensationRepository.findByEmployeeIdOrderByEffectiveDateAsc(employeeId);

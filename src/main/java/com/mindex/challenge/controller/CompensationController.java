@@ -14,6 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
+/**
+ * REST endpoints for creating and reading compensation records.
+ */
 @RestController
 public class CompensationController {
     private static final Logger LOG = LoggerFactory.getLogger(CompensationController.class);
@@ -21,6 +24,8 @@ public class CompensationController {
     @Autowired
     private CompensationService compensationService;
 
+    // POST /compensation with a Compensation in the request body.
+    // Returns 201 Created, the standard status for creating a new record.
     @PostMapping("/compensation")
     @ResponseStatus(HttpStatus.CREATED)
     public Compensation create(@RequestBody Compensation compensation) {
@@ -28,6 +33,8 @@ public class CompensationController {
         return compensationService.create(compensation);
     }
 
+    // GET /compensation/{employeeId} returns all of that employee's
+    // compensation records, oldest first
     @GetMapping("/compensation/{employeeId}")
     public List<Compensation> read(@PathVariable String employeeId) {
         LOG.debug("Received compensation read request for employee id [{}]", employeeId);
